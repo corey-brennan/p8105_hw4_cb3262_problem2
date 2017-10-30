@@ -1,0 +1,45 @@
+---
+title: "p8105_hw4_cb3262_problem2"
+author: "Corey Brennan"
+date: "October 29, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r cars}
+# Loading library
+library(readxl)
+library(haven)
+library(janitor)
+library(tidyverse)
+library(rnoaa)
+library(ggridges)
+library(ggthemes)
+library(forcats)
+
+# Reading in polsMonth data
+polsMonth = read_csv("./pols-Month.csv") %>%
+  clean_names() %>%
+  rename(date = mon)
+polsMonth$date = lubridate::floor_date(polsMonth$date, "month")
+
+# Reading in and joing GDP data with polsMonth
+polsGDP = read_csv("./GDP.csv") %>%
+  clean_names() %>%
+  left_join(polsMonth, by = "date") %>%
+  mutate(president = ifelse(prez_dem == 1, "dem", ifelse(prez_gop == 1, "gop", "NA"))) %>%
+  mutate(GDP = as.numeric(value)) %>%
+  filter(GDP != ".", president != "NA") %>%
+  select(-prez_gop, -prez_dem, -value) 
+
+# Graphing GDP by date, colored by president
+
+
+```
+
+
