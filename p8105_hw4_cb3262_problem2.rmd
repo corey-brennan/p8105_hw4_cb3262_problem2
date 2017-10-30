@@ -17,13 +17,12 @@ library(readxl)
 library(haven)
 library(janitor)
 library(tidyverse)
-library(rnoaa)
 library(ggridges)
 library(ggthemes)
 library(forcats)
 
 # Reading in polsMonth data
-polsMonth = read_csv("./pols-Month.csv") %>%
+polsMonth = read_csv("./pols-month.csv") %>%
   clean_names() %>%
   rename(date = mon)
 polsMonth$date = lubridate::floor_date(polsMonth$date, "month")
@@ -38,8 +37,15 @@ polsGDP = read_csv("./GDP.csv") %>%
   select(-prez_gop, -prez_dem, -value) 
 
 # Graphing GDP by date, colored by president
-
+ggplot(polsGDP, aes(x = date, y = GDP)) +
+  geom_point(aes(color = president)) +
+  scale_color_manual(values = c("blue", "red")) + 
+  geom_smooth(color = "black", se = FALSE) + 
+  labs(title = "GDP value over time",
+       xlab = "Date",
+       ylab = "GDP")
 
 ```
 
 
+Displayed above is a graph which shows GDP values over time. Blue dots represent dates when a democrat was president, while red dots represent dates when a republican was president. We can see from the graph that the political party of the president changes every couple of years and does not necessarily seem to have much influence on GDP values. During all democratic presidencies the median GDP is `r filter(polsGDP, president == "dem") %>%  summarize(round(median(GDP), 2)) %>% .[[1]]`. During all republican presidencies the median GDP is `r filter(polsGDP, president == "gop") %>%  summarize(round(median(GDP), 2)) %>% .[[1]]`.
